@@ -17,10 +17,7 @@ public class App {
         Dotenv dotenv = Dotenv.load();
         final String MY_API_KEY = dotenv.get("MY_IMDB_API_KEY", "");
 
-        List<String> urlImages = new ArrayList<>();
-        List<String> titles = new ArrayList<>();
-        List<String> years = new ArrayList<>();
-        List<String> imDbRatings = new ArrayList<>();
+        List<Movie> movieList = new ArrayList<>();
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -31,18 +28,21 @@ public class App {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String json = response.body();
 
-        JSONObject obj = new JSONObject(json);
-        JSONArray arrItems = obj.getJSONArray("items");
+        JSONObject root = new JSONObject(json);
+        JSONArray items = root.getJSONArray("items");
 
-        for (int i = 0; i < arrItems.length(); i++) {
-            urlImages.add(arrItems.getJSONObject(i).getString("image"));
-            titles.add(arrItems.getJSONObject(i).getString("title"));
-            years.add(arrItems.getJSONObject(i).getString("year"));
-            imDbRatings.add(arrItems.getJSONObject(i).getString("imDbRating"));
+        for (int i = 0; i < items.length(); i++) {
+            String imageUrl = items.getJSONObject(i).getString("image");
+            String title = items.getJSONObject(i).getString("title");
+            String year = items.getJSONObject(i).getString("year");
+            String imDbRating = items.getJSONObject(i).getString("imDbRating");
+
+            movieList.add(new Movie(title, year, imageUrl, imDbRating));
         }
 
-        for (int i = 0; i < titles.size(); i++) {
-            System.out.printf("%d. %s (%s) - %s%n", i + 1, titles.get(i), years.get(i), imDbRatings.get(i));
+        for (int i = 0; i < movieList.size(); i++) {
+            Movie movie = movieList.get(i);
+            System.out.printf("%d. %s%n", i+1, movie.toString());
         }
     }
 }

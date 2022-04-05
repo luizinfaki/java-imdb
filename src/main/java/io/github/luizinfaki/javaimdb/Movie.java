@@ -37,4 +37,9 @@ public class Movie {
     public String getImDbRating() {
         return imDbRating;
     }
+
+    @Override
+    public String toString() {
+        return fullTitle + " - " + imDbRating;
+    }
 }
