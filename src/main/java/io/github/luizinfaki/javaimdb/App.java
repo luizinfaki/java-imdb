@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -40,9 +41,12 @@ public class App {
             movieList.add(new Movie(title, year, imageUrl, imDbRating));
         }
 
-        for (int i = 0; i < movieList.size(); i++) {
-            Movie movie = movieList.get(i);
-            System.out.printf("%d. %s%n", i+1, movie.toString());
-        }
+        PrintWriter pw = new PrintWriter("test.html");
+        boolean created = new HTMLGenerator(pw).generate(movieList);
+
+        if (created) System.out.println("html ok");
+
+        pw.flush();
+        pw.close();
     }
 }
